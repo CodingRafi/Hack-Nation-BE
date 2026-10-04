@@ -49,7 +49,7 @@ class TelemetryApiTests(TransactionTestCase):
 class TelemetryBroadcastTests(TransactionTestCase):
     async def test_post_is_pushed_to_websocket_viewer(self):
         viewer = WebsocketCommunicator(
-            application, "/ws/stream/", headers=[(b"origin", b"http://localhost:3000")]
+            application, "/ws/stream/", headers=[(b"origin", b"https://hack-nation-fe.vercel.app")]
         )
         self.assertTrue((await viewer.connect())[0])
         resp = await sync_to_async(APIClient().post)("/api/telemetry/", SAMPLE, format="json")

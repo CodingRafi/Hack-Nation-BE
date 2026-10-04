@@ -13,7 +13,7 @@ Django 6 ASGI backend. Receives results from the AI process (`../AI`) and stream
 
 ## Architecture
 - `config/asgi.py` — `ProtocolTypeRouter`: HTTP -> Django, WebSocket -> Channels.
-  - `ws/stream/` browsers, read-only, Origin-checked (`WS_ALLOWED_ORIGINS`). Late joiners get the latest payload on connect.
+  - `ws/stream/` browsers, read-only, Origin-checked (`WS_ALLOWED_ORIGINS`, default only `https://hack-nation-fe.vercel.app`; add localhost via `.env` for local dev; CORS uses `CORS_ALLOWED_ORIGINS`). Late joiners get the latest payload on connect.
   - `ws/ingest/?token=<INGEST_TOKEN>` AI process, write-only. No Origin check (not a browser); closes with 4401 on bad token.
 - `stream/services.py` — `publish(payload)`: caches latest payload and `group_send`s to group `ai_stream`. Both ingest paths (WS and `POST /api/ingest/` with `X-Ingest-Token`) go through it.
 - `telemetry/` — persistence (SQLite) + REST for the engine/dashboard:
