@@ -15,8 +15,13 @@ def env_list(name: str, default: str = "") -> list[str]:
 
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "django-insecure-dev-only-change-me")
 DEBUG = os.getenv("DJANGO_DEBUG", "1") == "1"
-ALLOWED_HOSTS = env_list(
-    "DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1,.replit.app,.replit.dev,.repl.co"
+# TEMPORARY: open to every host/origin while deploying. Lock down by setting
+# DJANGO_ALLOW_ALL=0 plus DJANGO_ALLOWED_HOSTS / CORS_ALLOWED_ORIGINS / WS_ALLOWED_ORIGINS.
+ALLOW_ALL = os.getenv("DJANGO_ALLOW_ALL", "1") == "1"
+ALLOWED_HOSTS = (
+    ["*"]
+    if ALLOW_ALL
+    else env_list("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1,.replit.app,.onrender.com")
 )
 
 INSTALLED_APPS = [
@@ -113,9 +118,14 @@ FRONTEND_ORIGIN = "https://hack-nation-fe.vercel.app"
 # Only the deployed frontend by default. For local dev set
 # CORS_ALLOWED_ORIGINS=http://localhost:3000 in .env. Trailing slashes are
 # stripped because browsers send Origin without one.
+CORS_ALLOW_ALL_ORIGINS = ALLOW_ALL
 CORS_ALLOWED_ORIGINS = [o.rstrip("/") for o in env_list("CORS_ALLOWED_ORIGINS", FRONTEND_ORIGIN)]
 # Browsers send Origin on WebSocket handshakes; checked in config/asgi.py.
-WS_ALLOWED_ORIGINS = [o.rstrip("/") for o in env_list("WS_ALLOWED_ORIGINS", FRONTEND_ORIGIN)]
+WS_ALLOWED_ORIGINS = (
+    ["*"]
+    if ALLOW_ALL
+    else [o.rstrip("/") for o in env_list("WS_ALLOWED_ORIGINS", FRONTEND_ORIGIN)]
+)
 
 # --- AI ingest ------------------------------------------------------------
 # Shared secret the AI process sends (?token=... or X-Ingest-Token header).

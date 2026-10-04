@@ -30,6 +30,7 @@ The backend passes JSON through unchanged; it does not validate fields.
 
 ## Notes
 - Run order for the demo: `uv run manage.py runserver` -> `pnpm dev` (FE) -> `python main_engine.py` (AI).
+- `DJANGO_ALLOW_ALL` (default 1, temporary) opens ALLOWED_HOSTS, CORS and WS origins to everyone; set 0 to enforce `DJANGO_ALLOWED_HOSTS` / `CORS_ALLOWED_ORIGINS` / `WS_ALLOWED_ORIGINS`.
 - Without `REDIS_URL`, channel layer and cache are in-memory (single process only). Set `REDIS_URL` for multiple processes/workers.
 - Frames are large; the latest payload is cached in full so new viewers see a frame immediately.
 - Telegram integration was planned and dropped (also removed from the engine plan) — don't add it unless asked.
